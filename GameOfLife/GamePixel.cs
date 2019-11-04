@@ -5,10 +5,14 @@ namespace GameOfLife
     public class GamePixel
     {
         private bool Value { get; set; }
+        public int X { get; }
+        public int Y { get; }
 
-        public GamePixel()
+        public GamePixel(int x, int y)
         {
             Value = false;
+            X = x;
+            Y = y;
         }
 
         public bool IsAlive()

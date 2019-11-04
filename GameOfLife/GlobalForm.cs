@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace GameOfLife
 {
-    public partial class Form1 : Form
+    public partial class GlobalForm : Form
     {
-        public Form1()
+        public GlobalForm()
         {
             InitializeComponent();
         }
@@ -21,7 +23,12 @@ namespace GameOfLife
             StartButton.Enabled = false;
             PauseButton.Enabled = true;
             var grid = new Grid(width, height, randomElementsNumber);
-            Draw(grid);
+            while (true)
+            {
+                Draw(grid.GetUsedPixels(), width, height);
+                grid.MakeNewGeneration(new ConwayRules());
+                Thread.Sleep(2000);
+            }
         }
 
         private void PauseButton_Click(object sender, EventArgs e)
@@ -30,37 +37,31 @@ namespace GameOfLife
             PauseButton.Enabled = false;
         }
 
-        private void Draw(Grid grid)
+        private void Draw(List<GamePixel> elementsToDraw, int width, int height)
         {
             var screen = Screen.FromControl(this);
             var workingArea = screen.WorkingArea;
 
-
             var workingWidth = workingArea.Height;
             var workingHeight = workingWidth;
 
-
-            var elementWidth = workingWidth / grid.WidthElementsNumber;
-            var elementHeight = workingHeight / grid.HeightElementsNumber;
+            var elementWidth = workingWidth / width;
+            var elementHeight = workingHeight / height;
 
             var bitmap = new Bitmap(workingWidth, workingHeight);
             boardPictureBox.Width = workingWidth;
             boardPictureBox.Height = workingHeight;
-            for (var i = 0; i < grid.WidthElementsNumber; i++)
+
+            foreach (var gamePixel in elementsToDraw)
             {
-                for (var j = 0; j < grid.HeightElementsNumber; j++)
+                using (var graphics = Graphics.FromImage(bitmap))
                 {
-                    using (var graphics = Graphics.FromImage(bitmap))
+                    if (gamePixel.IsAlive())
                     {
-                        var actualPixel = grid.GetGamePixel(i, j);
-                        if (actualPixel.IsAlive())
-                        {
-                            graphics.FillRectangle(Brushes.Black, new Rectangle(i * elementWidth, j * elementHeight,
-                                elementWidth, elementHeight));
-                        }
+                        graphics.FillRectangle(Brushes.Black, new Rectangle(gamePixel.X * elementWidth, gamePixel.Y * elementHeight, elementWidth, elementHeight));
                     }
                 }
-            }
+            }          
             boardPictureBox.Image = bitmap;
         }
     }

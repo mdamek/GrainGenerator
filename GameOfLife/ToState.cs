@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace GameOfLife
 {
-    public class Rules
+    public enum ToState
     {
+        ToLive,
+        ToDead,
+        DoNotChange
     }
 }
