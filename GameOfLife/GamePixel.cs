@@ -8,9 +8,9 @@ namespace GameOfLife
         public int X { get; }
         public int Y { get; }
 
-        public GamePixel(int x, int y)
+        public GamePixel(int x, int y, bool value = false)
         {
-            Value = false;
+            Value = value;
             X = x;
             Y = y;
         }

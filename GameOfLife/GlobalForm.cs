@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GameOfLife
@@ -23,12 +24,8 @@ namespace GameOfLife
             StartButton.Enabled = false;
             PauseButton.Enabled = true;
             var grid = new Grid(width, height, randomElementsNumber);
-            while (true)
-            {
-                Draw(grid.GetUsedPixels(), width, height);
-                grid.MakeNewGeneration(new ConwayRules());
-                Thread.Sleep(2000);
-            }
+            Draw(grid.GetUsedPixels(), width, height);
+            grid.MakeNewGeneration(new ConwayRules());
         }
 
         private void PauseButton_Click(object sender, EventArgs e)
@@ -42,7 +39,7 @@ namespace GameOfLife
             var screen = Screen.FromControl(this);
             var workingArea = screen.WorkingArea;
 
-            var workingWidth = workingArea.Height;
+            var workingWidth = workingArea.Height - 40;
             var workingHeight = workingWidth;
 
             var elementWidth = workingWidth / width;

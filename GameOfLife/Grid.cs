@@ -9,7 +9,7 @@ namespace GameOfLife
         public int WidthElementsNumber { get; set; }
         public int HeightElementsNumber { get; set; }
         public int RandomElementsNumber { get; set; }
-        private GamePixel[] BoardValues { get; set; }
+        private GamePixel[,] BoardValues { get; set; }
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
             WidthElementsNumber = widthElementsNumber;
@@ -46,12 +46,21 @@ namespace GameOfLife
 
         public void MakeNewGeneration(IRules rules)
         {
+            var actualBoard = new GamePixel[WidthElementsNumber, HeightElementsNumber];
             for (var i = 0; i < WidthElementsNumber; i++)
             {
                 for (var j = 0; j < HeightElementsNumber; j++)
                 {
-                    var neighborhoods = GetNeighborhoodsNumber(BoardValues[i, j], WidthElementsNumber, HeightElementsNumber);
-                    var decision = rules.ChangeState(neighborhoods, BoardValues[i, j].IsAlive());
+                    var actualPixel = BoardValues[i, j];
+                    actualBoard[i, j] = new GamePixel(actualPixel.X, actualPixel.Y, actualPixel.IsAlive());
+                }
+            }
+            for (var i = 0; i < WidthElementsNumber; i++)
+            {
+                for (var j = 0; j < HeightElementsNumber; j++)
+                {
+                    var neighborhoods = GetNeighborhoodsNumber(actualBoard[i, j], WidthElementsNumber, HeightElementsNumber);
+                    var decision = rules.ChangeState(neighborhoods, actualBoard[i, j].IsAlive());
                     switch (decision)
                     {
                         case ToState.ToDead:
@@ -98,21 +107,19 @@ namespace GameOfLife
             var neighborhoods = new List<bool>
             {
                 GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y - 1),
                 GetValueOfNeighborhood(gamePixel.X, gamePixel.Y - 1),
                 GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y - 1)
+
+
+                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y + 1),
+                GetValueOfNeighborhood(gamePixel.X, gamePixel.Y + 1),
+                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y + 1),
+
+                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y),
+                GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y)
             };
             return neighborhoods.Count(e => e);
         }
 
-        private GamePixel Get(int x, int y)
-        {
-            return BoardValues.FirstOrDefault(e => e.X == x && e.Y == y);
-        }
     }
 }
