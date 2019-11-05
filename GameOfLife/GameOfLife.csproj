@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConwayRules.cs" />
-    <Compile Include="GamePixelsExtensions.cs" />
     <Compile Include="GlobalForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace GameOfLife
 {
     public class Grid
     {
-        public int WidthElementsNumber { get; set; }
-        public int HeightElementsNumber { get; set; }
-        public int RandomElementsNumber { get; set; }
-        private List<GamePixel> BoardValues { get; set; }
+        private int WidthElementsNumber { get; }
+        private int HeightElementsNumber { get; }
+        private List<GamePixel> BoardValues { get; }
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
             WidthElementsNumber = widthElementsNumber;
             HeightElementsNumber = heightElementsNumber;
-            RandomElementsNumber = randomElementsNumber;
             BoardValues = InitializeBoardValues(widthElementsNumber, heightElementsNumber, randomElementsNumber);
         }
 
@@ -31,14 +29,13 @@ namespace GameOfLife
                 }
                 
             }
-
             for (var i = 0; i < randomElementsNumber; i++)
             {
                 int randomIndex;
                 while (true)
                 {
                     randomIndex = random.Next(0, boardValues.Count - 1);
-                    if (!boardValues[randomIndex].IsAlive()) break;
+                    if (boardValues[randomIndex].IsAlive() == false) break;
                 }
                 boardValues[randomIndex].Revive();
             }
@@ -48,20 +45,25 @@ namespace GameOfLife
         public void MakeNewGeneration(IRules rules)
         {
             var actualBoard = BoardValues.ConvertAll(e => new GamePixel(e.X, e.Y, e.IsAlive()));
-            for (var i = 0; i < actualBoard.Count; i++)
+            Parallel.For(0, actualBoard.Count, i =>
             {
                 var actualPixel = actualBoard[i];
                 var neighborhoods = GetNeighborhoodsNumber(i, WidthElementsNumber, HeightElementsNumber, actualBoard);
                 var decision = rules.ChangeState(neighborhoods, actualPixel.IsAlive());
-                if (decision == ToState.ToDead)
+                switch (decision)
                 {
-                    BoardValues[i].Kill();
+                    case ToState.ToDead:
+                        BoardValues[i].Kill();
+                        break;
+                    case ToState.ToLive:
+                        BoardValues[i].Revive();
+                        break;
+                    case ToState.DoNotChange:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                if (decision == ToState.ToLive)
-                {
-                    BoardValues[i].Revive();
-                }
-            }
+            });
         }
 
         public List<GamePixel> GetUsedPixels()
@@ -103,7 +105,6 @@ namespace GameOfLife
                 GetValueOfNeighborhood(actualPixel.X, actualPixel.Y - 1, index - width),
                 GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y - 1, index - width + 1),
 
-
                 GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y + 1, index + width - 1),
                 GetValueOfNeighborhood(actualPixel.X, actualPixel.Y + 1, index + width),
                 GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y + 1, index + width + 1),
@@ -113,6 +114,5 @@ namespace GameOfLife
             };
             return neighborhoods.Count(e => e);
         }
-
     }
 }
