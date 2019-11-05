@@ -4,7 +4,7 @@ namespace GameOfLife
 {
     public class GridValidator
     {
-        public bool Validate(int width, int height, int randomElementsNumber)
+        public bool Validate(int width, int height, int randomElementsNumber, int interval)
         {
             if (width < 0)
             {
@@ -24,6 +24,11 @@ namespace GameOfLife
             if (width * height < randomElementsNumber)
             {
                 MessageBox.Show($"Random elements number must be < than total elements number: {width * height}", "Error");
+                return false;
+            }
+            if (interval <= 0)
+            {
+                MessageBox.Show($"Interval must be > 0", "Error");
                 return false;
             }
             return true;

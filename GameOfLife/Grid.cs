@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace GameOfLife
 {
@@ -9,7 +10,7 @@ namespace GameOfLife
         public int WidthElementsNumber { get; set; }
         public int HeightElementsNumber { get; set; }
         public int RandomElementsNumber { get; set; }
-        private GamePixel[,] BoardValues { get; set; }
+        private List<GamePixel> BoardValues { get; set; }
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
             WidthElementsNumber = widthElementsNumber;
@@ -18,105 +19,97 @@ namespace GameOfLife
             BoardValues = InitializeBoardValues(widthElementsNumber, heightElementsNumber, randomElementsNumber);
         }
 
-        private GamePixel[,] InitializeBoardValues(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
+        private List<GamePixel> InitializeBoardValues(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
-            var boardValues =  new GamePixel[widthElementsNumber, heightElementsNumber];
+            var boardValues =  new List<GamePixel>(widthElementsNumber * heightElementsNumber);
             var random = new Random();
             for (var i = 0; i < widthElementsNumber; i++)
             {
                 for (var j = 0; j < heightElementsNumber; j++)
                 {
-                    boardValues[i, j] = new GamePixel(i,j);
+                    boardValues.Add(new GamePixel(i, j));
                 }
+                
             }
+
             for (var i = 0; i < randomElementsNumber; i++)
             {
-                int randomX;
-                int randomY;
+                int randomIndex;
                 while (true)
                 {
-                    randomX = random.Next(0, widthElementsNumber);
-                    randomY = random.Next(0, heightElementsNumber);
-                    if (!boardValues[randomX, randomY].IsAlive()) break;
+                    randomIndex = random.Next(0, boardValues.Count - 1);
+                    if (!boardValues[randomIndex].IsAlive()) break;
                 }
-                boardValues[randomX, randomY].Revive();
+                boardValues[randomIndex].Revive();
             }
             return boardValues;
         }
 
         public void MakeNewGeneration(IRules rules)
         {
-            var actualBoard = new GamePixel[WidthElementsNumber, HeightElementsNumber];
-            for (var i = 0; i < WidthElementsNumber; i++)
+            var actualBoard = BoardValues.ConvertAll(e => new GamePixel(e.X, e.Y, e.IsAlive()));
+            for (var i = 0; i < actualBoard.Count; i++)
             {
-                for (var j = 0; j < HeightElementsNumber; j++)
+                var actualPixel = actualBoard[i];
+                var neighborhoods = GetNeighborhoodsNumber(i, WidthElementsNumber, HeightElementsNumber, actualBoard);
+                var decision = rules.ChangeState(neighborhoods, actualPixel.IsAlive());
+                if (decision == ToState.ToDead)
                 {
-                    var actualPixel = BoardValues[i, j];
-                    actualBoard[i, j] = new GamePixel(actualPixel.X, actualPixel.Y, actualPixel.IsAlive());
+                    BoardValues[i].Kill();
                 }
-            }
-            for (var i = 0; i < WidthElementsNumber; i++)
-            {
-                for (var j = 0; j < HeightElementsNumber; j++)
+                if (decision == ToState.ToLive)
                 {
-                    var neighborhoods = GetNeighborhoodsNumber(actualBoard[i, j], WidthElementsNumber, HeightElementsNumber);
-                    var decision = rules.ChangeState(neighborhoods, actualBoard[i, j].IsAlive());
-                    switch (decision)
-                    {
-                        case ToState.ToDead:
-                            BoardValues[i, j].Kill();
-                            break;
-                        case ToState.ToLive:
-                            BoardValues[i,j].Revive();
-                            break;
-                        case ToState.DoNotChange:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    BoardValues[i].Revive();
                 }
             }
         }
 
         public List<GamePixel> GetUsedPixels()
         {
-            var usedPixels = new List<GamePixel>();
-            for (var i = 0; i < WidthElementsNumber; i++)
-            {
-                for (var j = 0; j < HeightElementsNumber; j++)
-                {
-                    if (BoardValues[i, j].IsAlive())
-                    {
-                        usedPixels.Add(BoardValues[i, j]);
-                    }
-                }
-            }
-            return usedPixels;
+            return BoardValues.Where(e => e.IsAlive()).ToList();
         }
 
-        private int GetNeighborhoodsNumber(GamePixel gamePixel, int width, int height)
+        public GamePixel ChangeOnePixelColor(int x, int y)
         {
-            bool GetValueOfNeighborhood(int x, int y)
+            var value = BoardValues.SingleOrDefault(e => e.X == x && e.Y == y);
+            if(value == null) throw new ArgumentException("There is no that value");
+            var index = BoardValues.IndexOf(value);
+            if (BoardValues[index].IsAlive())
             {
-                if (x == -1 || y == -1 || x == width || y == height)
+                BoardValues[index].Kill();
+            }
+            else
+            {
+                BoardValues[index].Revive();
+            }
+            return BoardValues[index];
+        }
+
+        private int GetNeighborhoodsNumber(int index, int width, int height, List<GamePixel> gamePixels)
+        {
+            bool GetValueOfNeighborhood(int x, int y, int i)
+            {
+                if (x == -1 || y == -1 || x == width || y == height || i < 0 || i >= gamePixels.Count)
                 {
                     return false;
                 }
-                return BoardValues[x, y].IsAlive();
+                return gamePixels[i].IsAlive();
             }
+
+            var actualPixel = gamePixels[index];
             var neighborhoods = new List<bool>
             {
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X, gamePixel.Y - 1),
-                GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y - 1),
+                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y - 1, index - width - 1),
+                GetValueOfNeighborhood(actualPixel.X, actualPixel.Y - 1, index - width),
+                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y - 1, index - width + 1),
 
 
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y + 1),
-                GetValueOfNeighborhood(gamePixel.X, gamePixel.Y + 1),
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y + 1),
+                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y + 1, index + width - 1),
+                GetValueOfNeighborhood(actualPixel.X, actualPixel.Y + 1, index + width),
+                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y + 1, index + width + 1),
 
-                GetValueOfNeighborhood(gamePixel.X - 1, gamePixel.Y),
-                GetValueOfNeighborhood(gamePixel.X + 1, gamePixel.Y)
+                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y, index - 1),
+                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y, index + 1)
             };
             return neighborhoods.Count(e => e);
         }
