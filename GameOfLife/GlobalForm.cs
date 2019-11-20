@@ -114,7 +114,7 @@ namespace GameOfLife
             var pixel = Grid.ChangeOnePixelColor(finalX, finalY);
             if (pixel.IsAlive())
             {
-                ActualView.Add(new GamePixel(finalX, finalY, true));
+                ActualView.Add(new GamePixel(finalX, finalY, 1, true, Color.AliceBlue));
             }
             else
             {

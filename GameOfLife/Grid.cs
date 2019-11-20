@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,32 +21,36 @@ namespace GameOfLife
 
         private List<GamePixel> InitializeBoardValues(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var boardValues =  new List<GamePixel>(widthElementsNumber * heightElementsNumber);
-            var random = new Random();
+            var randomValues =
+                PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, randomElementsNumber);
+            var ran = new List<int>(randomValues);
+            var randomColorsToUse = 
+                PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, 16777216)
+                .ConvertAll(Color.FromArgb);
             for (var i = 0; i < widthElementsNumber; i++)
             {
                 for (var j = 0; j < heightElementsNumber; j++)
                 {
                     boardValues.Add(new GamePixel(i, j));
                 }
-                
             }
             for (var i = 0; i < randomElementsNumber; i++)
             {
-                int randomIndex;
-                while (true)
-                {
-                    randomIndex = random.Next(0, boardValues.Count - 1);
-                    if (boardValues[randomIndex].IsAlive() == false) break;
-                }
-                boardValues[randomIndex].Revive();
+                boardValues[i].Color = randomColorsToUse[i];
+                boardValues[randomValues[i]].Revive();
+                boardValues[i].Id = i;
             }
+            stopwatch.Stop();
+            var stod = stopwatch.Elapsed.Milliseconds;
             return boardValues;
         }
 
         public void MakeNewGeneration(IRules rules)
         {
-            var actualBoard = BoardValues.ConvertAll(e => new GamePixel(e.X, e.Y, e.IsAlive()));
+            var actualBoard = BoardValues.ConvertAll(e => new GamePixel(e.X, e.Y, e.Id, e.IsAlive(), e.Color));
             Parallel.For(0, actualBoard.Count, i =>
             {
                 var actualPixel = actualBoard[i];
