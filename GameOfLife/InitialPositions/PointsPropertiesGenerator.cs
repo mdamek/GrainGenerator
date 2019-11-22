@@ -9,7 +9,7 @@ namespace GameOfLife
         private static readonly Random Random = new Random();
         public static List<int> GenerateRandom(int count, int min, int max)
         {
-            if (max <= min || count < 0 || (count > max - min && max - min > 0))
+            if (max <= min || count < 0 || count > max - min && max - min > 0)
             {
                 throw new ArgumentOutOfRangeException("Range " + min + " to " + max +
                         " (" + (max - (long)min) + " values), or count " + count + " is illegal");
@@ -31,6 +31,25 @@ namespace GameOfLife
                 result[i] = tmp;
             }
             return result;
+        }
+
+        public static List<Tuple<int,int>> GenerateRandomCoordinates(int randomNumbers, int maxWidth, int maxHeight)
+        {
+            var random = new Random();
+            var coordinates = new HashSet<Tuple<int, int>>();
+            for (var i = 0; i < randomNumbers; i++)
+            {
+                Tuple<int, int> newCoordinates;
+                while (true)
+                {
+                    newCoordinates = new Tuple<int, int>(random.Next(maxWidth), random.Next(maxHeight));
+                    if (!coordinates.Contains(newCoordinates)) break;
+                }
+
+                coordinates.Add(newCoordinates);
+            }
+
+            return coordinates.ToList();
         }
     }
 }

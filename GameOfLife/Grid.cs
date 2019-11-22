@@ -1,124 +1,221 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
+using GameOfLife.InitialPositions;
+using GameOfLife.Neighborhoods;
 
 namespace GameOfLife
 {
     public class Grid
     {
-        private int WidthElementsNumber { get; }
-        private int HeightElementsNumber { get; }
-        private List<GamePixel> BoardValues { get; }
-        public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
+        public int WidthElementsNumber { get; }
+        public int HeightElementsNumber { get; }
+        private GamePixel[,] BoardValues { get; set; }
+        public List<GamePixelWithCoordinates> Grained { get; set; }
+        private bool PeriodicValues { get; }
+
+        public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber, bool periodicValues)
         {
             WidthElementsNumber = widthElementsNumber;
             HeightElementsNumber = heightElementsNumber;
+            PeriodicValues = periodicValues;
             BoardValues = InitializeBoardValues(widthElementsNumber, heightElementsNumber, randomElementsNumber);
+            GetGrainedAndNotPixels();
         }
 
-        private List<GamePixel> InitializeBoardValues(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
+        private void GetGrainedAndNotPixels()
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var boardValues =  new List<GamePixel>(widthElementsNumber * heightElementsNumber);
-            var randomValues =
-                PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, randomElementsNumber);
-            var ran = new List<int>(randomValues);
-            var randomColorsToUse = 
-                PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, 16777216)
-                .ConvertAll(Color.FromArgb);
-            for (var i = 0; i < widthElementsNumber; i++)
+            Grained = new List<GamePixelWithCoordinates>();
+            for (var i = 0; i < WidthElementsNumber; i++)
             {
-                for (var j = 0; j < heightElementsNumber; j++)
+                for (var j = 0; j < HeightElementsNumber; j++)
                 {
-                    boardValues.Add(new GamePixel(i, j));
+                    if (BoardValues[i, j].IsGrain())
+                    {
+                        Grained.Add(new GamePixelWithCoordinates
+                        {
+                            X = i,
+                            Y = j,
+                            Color = BoardValues[i, j].Color,
+                            GrainValue = BoardValues[i, j].IsGrain(),
+                            Id = BoardValues[i, j].Id
+                        });
+                    }
                 }
             }
-            for (var i = 0; i < randomElementsNumber; i++)
-            {
-                boardValues[i].Color = randomColorsToUse[i];
-                boardValues[randomValues[i]].Revive();
-                boardValues[i].Id = i;
-            }
-            stopwatch.Stop();
-            var stod = stopwatch.Elapsed.Milliseconds;
-            return boardValues;
         }
 
-        public void MakeNewGeneration(IRules rules)
+        private GamePixel[,] InitializeBoardValues(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber)
         {
-            var actualBoard = BoardValues.ConvertAll(e => new GamePixel(e.X, e.Y, e.Id, e.IsAlive(), e.Color));
-            Parallel.For(0, actualBoard.Count, i =>
+            var readyBoard = InitialValuesGenerator.RandomValues(randomElementsNumber, widthElementsNumber, heightElementsNumber);
+            return readyBoard;
+        }
+
+        public void MakeNewGeneration()
+        {
+            var temporaryBoard = new GamePixel[WidthElementsNumber, HeightElementsNumber];
+            for (var i = 0; i < WidthElementsNumber; i++)
             {
-                var actualPixel = actualBoard[i];
-                var neighborhoods = GetNeighborhoodsNumber(i, WidthElementsNumber, HeightElementsNumber, actualBoard);
-                var decision = rules.ChangeState(neighborhoods, actualPixel.IsAlive());
-                switch (decision)
+                for (var j = 0; j < HeightElementsNumber; j++)
                 {
-                    case ToState.ToDead:
-                        BoardValues[i].Kill();
-                        break;
-                    case ToState.ToLive:
-                        BoardValues[i].Revive();
-                        break;
-                    case ToState.DoNotChange:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    var actual = BoardValues[i, j];
+                    temporaryBoard[i, j] = new GamePixel{Color = actual.Color, GrainValue = actual.GrainValue, Id = actual.Id};
                 }
-            });
-        }
-
-        public List<GamePixel> GetUsedPixels()
-        {
-            return BoardValues.Where(e => e.IsAlive()).ToList();
-        }
-
-        public GamePixel ChangeOnePixelColor(int x, int y)
-        {
-            var value = BoardValues.SingleOrDefault(e => e.X == x && e.Y == y);
-            if(value == null) throw new ArgumentException("There is no that value");
-            var index = BoardValues.IndexOf(value);
-            if (BoardValues[index].IsAlive())
-            {
-                BoardValues[index].Kill();
             }
-            else
+            var toGrain = GetPixelsToGrain(temporaryBoard);
+            for (var i = 0; i < toGrain.Count; i++)
             {
-                BoardValues[index].Revive();
-            }
-            return BoardValues[index];
+                var actualPixel = toGrain[i];
+                NeighborhoodsAction(temporaryBoard, actualPixel);
+             }
         }
 
-        private int GetNeighborhoodsNumber(int index, int width, int height, List<GamePixel> gamePixels)
+        public List<GamePixelWithCoordinates> GetPixelsToGrain(GamePixel[,] boardValues)
         {
-            bool GetValueOfNeighborhood(int x, int y, int i)
+            var pixels = new List<GamePixelWithCoordinates>();
+            for (var i = 0; i < WidthElementsNumber; i++)
             {
-                if (x == -1 || y == -1 || x == width || y == height || i < 0 || i >= gamePixels.Count)
+                for (var j = 0; j < HeightElementsNumber; j++)
                 {
-                    return false;
+                    if (boardValues[i, j].IsGrain()) continue;
+                    var actual = BoardValues[i, j];
+                    pixels.Add(new GamePixelWithCoordinates { Color = actual.Color, GrainValue = actual.GrainValue, Id = actual.Id, X = i, Y = j });
                 }
-                return gamePixels[i].IsAlive();
             }
+            return pixels;
+        }
 
-            var actualPixel = gamePixels[index];
-            var neighborhoods = new List<bool>
+        //public GamePixel ChangeOnePixelColor(int x, int y)
+        //{
+        //    var value = BoardValues.SingleOrDefault(e => e.X == x && e.Y == y);
+        //    if(value == null) throw new ArgumentException("There is no that value");
+        //    var index = BoardValues.IndexOf(value);
+        //    if (BoardValues[index].IsGrain())
+        //    {
+
+        //    }
+        //    else
+        //    {
+        //        BoardValues[index].MakeGrain();
+        //    }
+        //    return BoardValues[index];
+        //}
+
+        
+
+        private void NeighborhoodsAction(GamePixel[,] temporaryBoard, GamePixelWithCoordinates actualPixel)
+        {
+            var x = actualPixel.X;
+            var y = actualPixel.Y;
+            var neighborhoodsPositions = NeighborhoodsCreator.Generate(NeighborhoodType.Moore);
+            var neighborhoods = new GamePixel[8];
+            if (PeriodicValues == false)
             {
-                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y - 1, index - width - 1),
-                GetValueOfNeighborhood(actualPixel.X, actualPixel.Y - 1, index - width),
-                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y - 1, index - width + 1),
+                if (x - 1 >= 0 && y - 1 >= 0)
+                {
+                    if(neighborhoodsPositions[0]) neighborhoods[0] = temporaryBoard[x - 1, y - 1];
+                }
+                else
+                {
+                    neighborhoods[0] = null;
+                }
+                if (y - 1 >= 0)
+                {
+                    if (neighborhoodsPositions[1]) neighborhoods[1] = temporaryBoard[x, y - 1];
+                }
+                else
+                {
+                    neighborhoods[1] = null;
+                }
 
-                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y + 1, index + width - 1),
-                GetValueOfNeighborhood(actualPixel.X, actualPixel.Y + 1, index + width),
-                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y + 1, index + width + 1),
+                if (x + 1 < WidthElementsNumber && y - 1 >= 0)
+                {
+                    if (neighborhoodsPositions[2]) neighborhoods[2] = temporaryBoard[x + 1, y - 1];
+                }
+                else
+                {
+                    neighborhoods[2] = null;
+                }
 
-                GetValueOfNeighborhood(actualPixel.X - 1, actualPixel.Y, index - 1),
-                GetValueOfNeighborhood(actualPixel.X + 1, actualPixel.Y, index + 1)
-            };
-            return neighborhoods.Count(e => e);
+                if (x - 1 >= 0)
+                {
+                    if (neighborhoodsPositions[3]) neighborhoods[3] = temporaryBoard[x - 1, y];
+                }
+                else
+                {
+                    neighborhoods[3] = null;
+                }
+
+                if (x + 1 < WidthElementsNumber)
+                {
+                    if (neighborhoodsPositions[4]) neighborhoods[4] = temporaryBoard[x + 1, y];
+                }
+                else
+                {
+                    neighborhoods[4] = null;
+                }
+
+                if (x - 1 >= 0 && y + 1 < HeightElementsNumber)
+                {
+                    if (neighborhoodsPositions[5]) neighborhoods[5] = temporaryBoard[x - 1, y + 1];
+                }
+                else
+                {
+                    neighborhoods[5] = null;
+                }
+
+                if (y + 1 < HeightElementsNumber)
+                {
+                    if (neighborhoodsPositions[6]) neighborhoods[6] = temporaryBoard[x, y + 1];
+                }
+                else
+                {
+                    neighborhoods[6] = null;
+                }
+
+                if (x + 1 < WidthElementsNumber && y + 1 < HeightElementsNumber)
+                {
+                    if (neighborhoodsPositions[7]) neighborhoods[7] = temporaryBoard[x + 1, y + 1];
+                }
+                else
+                {
+                    neighborhoods[7] = null;
+                }
+                var groupedByColors = neighborhoods
+                    .Where(e => e != null)
+                    .Where(e => e.GrainValue)
+                    .GroupBy(e => e.Color)
+                    .Select(e => new ColorCounter { Color = e.Key, Count = e.Count()})
+                    .OrderBy(e => e.Count)
+                    .ToList();
+                if(groupedByColors.Count == 0) return;
+                var max = groupedByColors.First();
+                var toRandom = groupedByColors.Where(e => e.Count == max.Count).ToList();
+                if (toRandom.Count == 1)
+                {
+                    BoardValues[x, y].Color = toRandom.First().Color;
+                    BoardValues[x,y].MakeGrain();
+                    actualPixel.GrainValue = true;
+                    actualPixel.Color = toRandom.First().Color;
+                    Grained.Add(actualPixel);
+                    return;
+                }
+                var random = new Random();
+                BoardValues[x, y].Color = toRandom[random.Next(0, toRandom.Count - 1)].Color;
+                BoardValues[x, y].MakeGrain();
+                actualPixel.GrainValue = true;
+                actualPixel.Color = toRandom.First().Color;
+                Grained.Add(actualPixel);
+            }
+        }
+
+        public class ColorCounter
+        {
+            public Color Color { get; set; }
+            public int Count { get; set; }
         }
     }
 }

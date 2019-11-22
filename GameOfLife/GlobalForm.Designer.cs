@@ -37,16 +37,20 @@
             this.StartButton = new System.Windows.Forms.Button();
             this.PauseButton = new System.Windows.Forms.Button();
             this.boardPictureBox = new System.Windows.Forms.PictureBox();
-            this.GodModeLabel = new System.Windows.Forms.Label();
             this.IntervalLabel = new System.Windows.Forms.Label();
             this.IntervalInput = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.boardPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // WidthLabel
             // 
             this.WidthLabel.AutoSize = true;
-            this.WidthLabel.Location = new System.Drawing.Point(57, 19);
+            this.WidthLabel.Location = new System.Drawing.Point(24, 52);
             this.WidthLabel.Name = "WidthLabel";
             this.WidthLabel.Size = new System.Drawing.Size(35, 13);
             this.WidthLabel.TabIndex = 0;
@@ -56,7 +60,7 @@
             // HeightLabel
             // 
             this.HeightLabel.AutoSize = true;
-            this.HeightLabel.Location = new System.Drawing.Point(57, 60);
+            this.HeightLabel.Location = new System.Drawing.Point(24, 93);
             this.HeightLabel.Name = "HeightLabel";
             this.HeightLabel.Size = new System.Drawing.Size(38, 13);
             this.HeightLabel.TabIndex = 1;
@@ -64,22 +68,22 @@
             // 
             // WidthInput
             // 
-            this.WidthInput.Location = new System.Drawing.Point(27, 35);
+            this.WidthInput.Location = new System.Drawing.Point(27, 68);
             this.WidthInput.Name = "WidthInput";
-            this.WidthInput.Size = new System.Drawing.Size(100, 20);
+            this.WidthInput.Size = new System.Drawing.Size(121, 20);
             this.WidthInput.TabIndex = 2;
             // 
             // HeightInput
             // 
-            this.HeightInput.Location = new System.Drawing.Point(27, 76);
+            this.HeightInput.Location = new System.Drawing.Point(27, 109);
             this.HeightInput.Name = "HeightInput";
-            this.HeightInput.Size = new System.Drawing.Size(100, 20);
+            this.HeightInput.Size = new System.Drawing.Size(121, 20);
             this.HeightInput.TabIndex = 3;
             // 
             // NumberOfRandomElementsLabel
             // 
             this.NumberOfRandomElementsLabel.AutoSize = true;
-            this.NumberOfRandomElementsLabel.Location = new System.Drawing.Point(10, 99);
+            this.NumberOfRandomElementsLabel.Location = new System.Drawing.Point(24, 132);
             this.NumberOfRandomElementsLabel.Name = "NumberOfRandomElementsLabel";
             this.NumberOfRandomElementsLabel.Size = new System.Drawing.Size(139, 13);
             this.NumberOfRandomElementsLabel.TabIndex = 4;
@@ -87,14 +91,14 @@
             // 
             // RandomElementsNumberInput
             // 
-            this.RandomElementsNumberInput.Location = new System.Drawing.Point(27, 115);
+            this.RandomElementsNumberInput.Location = new System.Drawing.Point(27, 148);
             this.RandomElementsNumberInput.Name = "RandomElementsNumberInput";
-            this.RandomElementsNumberInput.Size = new System.Drawing.Size(100, 20);
+            this.RandomElementsNumberInput.Size = new System.Drawing.Size(121, 20);
             this.RandomElementsNumberInput.TabIndex = 5;
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(27, 189);
+            this.StartButton.Location = new System.Drawing.Point(48, 343);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(100, 23);
             this.StartButton.TabIndex = 6;
@@ -105,7 +109,7 @@
             // PauseButton
             // 
             this.PauseButton.Enabled = false;
-            this.PauseButton.Location = new System.Drawing.Point(27, 228);
+            this.PauseButton.Location = new System.Drawing.Point(48, 387);
             this.PauseButton.Name = "PauseButton";
             this.PauseButton.Size = new System.Drawing.Size(100, 23);
             this.PauseButton.TabIndex = 7;
@@ -122,20 +126,10 @@
             this.boardPictureBox.TabStop = false;
             this.boardPictureBox.Click += new System.EventHandler(this.boardPictureBox_Click);
             // 
-            // GodModeLabel
-            // 
-            this.GodModeLabel.AutoSize = true;
-            this.GodModeLabel.Location = new System.Drawing.Point(24, 265);
-            this.GodModeLabel.Name = "GodModeLabel";
-            this.GodModeLabel.Size = new System.Drawing.Size(108, 13);
-            this.GodModeLabel.TabIndex = 9;
-            this.GodModeLabel.Text = "You are in God Mode";
-            this.GodModeLabel.Visible = false;
-            // 
             // IntervalLabel
             // 
             this.IntervalLabel.AutoSize = true;
-            this.IntervalLabel.Location = new System.Drawing.Point(47, 141);
+            this.IntervalLabel.Location = new System.Drawing.Point(24, 174);
             this.IntervalLabel.Name = "IntervalLabel";
             this.IntervalLabel.Size = new System.Drawing.Size(64, 13);
             this.IntervalLabel.TabIndex = 10;
@@ -143,20 +137,75 @@
             // 
             // IntervalInput
             // 
-            this.IntervalInput.Location = new System.Drawing.Point(27, 157);
+            this.IntervalInput.Location = new System.Drawing.Point(27, 190);
             this.IntervalInput.Name = "IntervalInput";
-            this.IntervalInput.Size = new System.Drawing.Size(100, 20);
+            this.IntervalInput.Size = new System.Drawing.Size(122, 20);
             this.IntervalInput.TabIndex = 11;
-            this.IntervalInput.Text = "250";
+            this.IntervalInput.Text = "1";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(27, 230);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 12;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 214);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(74, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Neighborhood";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "Random",
+            "Clicks",
+            "Circle area",
+            "Evenly"});
+            this.comboBox2.Location = new System.Drawing.Point(27, 28);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 21);
+            this.comboBox2.TabIndex = 14;
+            this.comboBox2.Text = "Random";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(27, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Initial setting";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(26, 257);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(72, 17);
+            this.checkBox1.TabIndex = 17;
+            this.checkBox1.Text = "Periodical";
+            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // GlobalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(989, 643);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.IntervalInput);
             this.Controls.Add(this.IntervalLabel);
-            this.Controls.Add(this.GodModeLabel);
             this.Controls.Add(this.boardPictureBox);
             this.Controls.Add(this.PauseButton);
             this.Controls.Add(this.StartButton);
@@ -186,9 +235,13 @@
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.Button PauseButton;
         private System.Windows.Forms.PictureBox boardPictureBox;
-        private System.Windows.Forms.Label GodModeLabel;
         private System.Windows.Forms.Label IntervalLabel;
         private System.Windows.Forms.TextBox IntervalInput;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 
