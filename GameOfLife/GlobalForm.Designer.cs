@@ -44,6 +44,9 @@
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.TimesList = new System.Windows.Forms.ListView();
+            this.Action = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.boardPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,7 +101,7 @@
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(48, 343);
+            this.StartButton.Location = new System.Drawing.Point(39, 284);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(100, 23);
             this.StartButton.TabIndex = 6;
@@ -109,7 +112,7 @@
             // PauseButton
             // 
             this.PauseButton.Enabled = false;
-            this.PauseButton.Location = new System.Drawing.Point(48, 387);
+            this.PauseButton.Location = new System.Drawing.Point(39, 328);
             this.PauseButton.Name = "PauseButton";
             this.PauseButton.Size = new System.Drawing.Size(100, 23);
             this.PauseButton.TabIndex = 7;
@@ -194,11 +197,37 @@
             this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // TimesList
+            // 
+            this.TimesList.AutoArrange = false;
+            this.TimesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Action,
+            this.Time});
+            this.TimesList.HideSelection = false;
+            this.TimesList.Location = new System.Drawing.Point(12, 366);
+            this.TimesList.Name = "TimesList";
+            this.TimesList.Scrollable = false;
+            this.TimesList.Size = new System.Drawing.Size(160, 265);
+            this.TimesList.TabIndex = 18;
+            this.TimesList.UseCompatibleStateImageBehavior = false;
+            this.TimesList.View = System.Windows.Forms.View.Details;
+            // 
+            // Action
+            // 
+            this.Action.Text = "Action";
+            this.Action.Width = 80;
+            // 
+            // Time
+            // 
+            this.Time.Text = "Time [ms]";
+            this.Time.Width = 71;
+            // 
             // GlobalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(989, 643);
+            this.Controls.Add(this.TimesList);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox2);
@@ -242,6 +271,9 @@
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.ListView TimesList;
+        public System.Windows.Forms.ColumnHeader Action;
+        private System.Windows.Forms.ColumnHeader Time;
     }
 }
 

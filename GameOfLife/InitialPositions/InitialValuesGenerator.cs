@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace GameOfLife.InitialPositions
 {
@@ -16,10 +17,8 @@ namespace GameOfLife.InitialPositions
             var randomColorsToUse =
                 PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, 16777216)
                     .ConvertAll(Color.FromArgb);
-            for (var i = 0; i < randomColorsToUse.Capacity; i++)
-            {
-                randomColorsToUse[i] = Color.FromArgb(255, randomColorsToUse[i]);
-            }
+            Parallel.For(0, randomColorsToUse.Capacity,
+                (i) => { randomColorsToUse[i] = Color.FromArgb(255, randomColorsToUse[i]); });
             var randomizeValue = 0;
             for (var i = 0; i < widthElementsNumber; i++)
             {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -16,6 +18,7 @@ namespace GameOfLife
         private List<GamePixelWithCoordinates> ActualView { get; set; }
         private int _maxHeight = 1000;
         private int _maxWidth = 1000;
+        private Bitmap bitmap;
 
         public GlobalForm()
         {
@@ -32,6 +35,7 @@ namespace GameOfLife
             if (!gridValidator.Validate(width, height, randomElementsNumber, interval)) return;
             PauseButton.Enabled = true;
             Grid = null;
+            TimesList.Items.Clear();
             Timer?.Dispose();
             GlobalWidth = width;
             GlobalHeight = height;
@@ -62,26 +66,29 @@ namespace GameOfLife
 
         private void Simulation()
         {
-            ActualView = Grid.Grained;
+            bitmap = new Bitmap(_maxWidth, _maxWidth / GlobalWidth * GlobalHeight);
+            boardPictureBox.Width = bitmap.Width;
+            boardPictureBox.Height = bitmap.Height;
+            ActualView = Grid.Grained.ToList();
             Draw(ActualView, GlobalWidth, GlobalHeight);
-            Grid.MakeNewGeneration();
+            Grid.MakeNewGeneration(TimesList);
         }
 
         private void Draw(List<GamePixelWithCoordinates> elementsToDraw, int width, int height)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             if (width >= height)
             {
                 var elementSize = _maxWidth / width;
-                var bitmap = new Bitmap(_maxWidth, elementSize * height);
-                boardPictureBox.Width = bitmap.Width;
-                boardPictureBox.Height = bitmap.Height;
-                foreach (var gamePixel in elementsToDraw)
+                for (var i = 0; i < elementsToDraw.Count; i++)
                 {
+                    var actual = elementsToDraw[i];
                     using (var graphics = Graphics.FromImage(bitmap))
                     {
-                        using (var brush = new SolidBrush(gamePixel.Color))
+                        using (var brush = new SolidBrush(actual.Color))
                         {
-                            graphics.FillRectangle(brush, new Rectangle(gamePixel.X * elementSize, gamePixel.Y * elementSize, elementSize, elementSize));
+                            graphics.FillRectangle(brush, new Rectangle(actual.X * elementSize, actual.Y * elementSize, elementSize, elementSize));
                         }
                     }
                 }
@@ -106,6 +113,9 @@ namespace GameOfLife
                 boardPictureBox.Image = null;
                 boardPictureBox.Image = bitmap;
             }
+            stopWatch.Stop();
+            var row = new ListViewItem(new[]{ "Draw", stopWatch.ElapsedMilliseconds.ToString() } );
+            TimesList.Items.Insert(0, row);
             if (ActualView.Count != Grid.HeightElementsNumber * Grid.WidthElementsNumber) return;
             Timer.Stop();
             MessageBox.Show("All grains are ready", "Information", MessageBoxButtons.OK);

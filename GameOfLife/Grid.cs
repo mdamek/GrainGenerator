@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml;
 using GameOfLife.InitialPositions;
 using GameOfLife.Neighborhoods;
@@ -14,7 +17,7 @@ namespace GameOfLife
         public int WidthElementsNumber { get; }
         public int HeightElementsNumber { get; }
         private GamePixel[,] BoardValues { get; set; }
-        public List<GamePixelWithCoordinates> Grained { get; set; }
+        public ConcurrentBag<GamePixelWithCoordinates> Grained { get; set; }
         private bool PeriodicValues { get; }
 
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber, bool periodicValues)
@@ -28,7 +31,7 @@ namespace GameOfLife
 
         private void GetGrainedAndNotPixels()
         {
-            Grained = new List<GamePixelWithCoordinates>();
+            Grained = new ConcurrentBag<GamePixelWithCoordinates>();
             for (var i = 0; i < WidthElementsNumber; i++)
             {
                 for (var j = 0; j < HeightElementsNumber; j++)
@@ -54,8 +57,10 @@ namespace GameOfLife
             return readyBoard;
         }
 
-        public void MakeNewGeneration()
+        public void MakeNewGeneration(ListView listView)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             var temporaryBoard = new GamePixel[WidthElementsNumber, HeightElementsNumber];
             for (var i = 0; i < WidthElementsNumber; i++)
             {
@@ -66,11 +71,13 @@ namespace GameOfLife
                 }
             }
             var toGrain = GetPixelsToGrain(temporaryBoard);
-            for (var i = 0; i < toGrain.Count; i++)
+            Parallel.For(0, toGrain.Count,new ParallelOptions(){MaxDegreeOfParallelism = 8}, i =>
             {
-                var actualPixel = toGrain[i];
-                NeighborhoodsAction(temporaryBoard, actualPixel);
-             }
+                NeighborhoodsAction(temporaryBoard, toGrain[i]);
+            });
+            stopWatch.Stop();
+            var row = new ListViewItem(new []{"Calculation", stopWatch.ElapsedMilliseconds.ToString() });
+            listView.Items.Insert(0,row);
         }
 
         public List<GamePixelWithCoordinates> GetPixelsToGrain(GamePixel[,] boardValues)
