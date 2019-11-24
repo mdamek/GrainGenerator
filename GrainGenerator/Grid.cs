@@ -15,13 +15,13 @@ namespace GameOfLife
     {
         public int WidthElementsNumber { get; }
         public int HeightElementsNumber { get; }
-        private GamePixel[,] BoardValues { get; set; }
+        public GamePixel[,] BoardValues { get; set; }
         public ConcurrentBag<GamePixelWithCoordinates> Grained { get; set; }
         private bool PeriodicValues { get; }
         private readonly List<bool> _neighborhoodsPositions;
 
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber, bool periodicValues,
-            string initialSetting, string neighborhoodType, List<Tuple<int,int>> toDrawValues)
+            string initialSetting, string neighborhoodType, List<Tuple<int,int, Color>> toDrawValues)
         {
             WidthElementsNumber = widthElementsNumber;
             HeightElementsNumber = heightElementsNumber;
@@ -55,7 +55,7 @@ namespace GameOfLife
         }
 
         private GamePixel[,] InitializeBoardValues(int widthElementsNumber, int heightElementsNumber,
-            int randomElementsNumber, string initialSetting, List<Tuple<int,int>> toDrawValues)
+            int randomElementsNumber, string initialSetting, List<Tuple<int,int, Color>> toDrawValues)
         {
             GamePixel[,] readyBoard = null;
             switch (initialSetting)

@@ -55,7 +55,7 @@ namespace GameOfLife.InitialPositions
             return Color.FromArgb(255, color);
         }
 
-        public static GamePixel[,] ValuesFromClicks(List<Tuple<int, int>> clicks, int widthElementsNumber, int heightElementsNumber)
+        public static GamePixel[,] ValuesFromClicks(List<Tuple<int, int, Color>> clicks, int widthElementsNumber, int heightElementsNumber)
         {
             var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
             var randomizeValue = 0;
@@ -71,8 +71,7 @@ namespace GameOfLife.InitialPositions
             foreach (var click in clicks)
             {
                 boardValues[click.Item1, click.Item2].GrainValue = true;
-                var newColor = RandomColor();
-                boardValues[click.Item1, click.Item2].Color = newColor;
+                boardValues[click.Item1, click.Item2].Color = click.Item3;
             }
 
             return boardValues;

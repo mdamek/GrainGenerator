@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using GameOfLife.InitialPositions;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GameOfLife
@@ -20,7 +21,7 @@ namespace GameOfLife
         private Bitmap _bitmap;
         private int _grainedElementsNumber;
         private int _elementSize;
-        private List<Tuple<int, int>> ToDrawValues { get; set; }
+        private List<Tuple<int, int, Color>> ToDrawValues { get; set; }
 
         public GlobalForm()
         {
@@ -36,7 +37,7 @@ namespace GameOfLife
             {
                 randomElementsNumber = int.Parse(RandomElementsNumberInput.Text);
             }
-            
+
             var interval = int.Parse(IntervalInput.Text);
             var gridValidator = new GridValidator();
             if (!gridValidator.Validate(width, height, randomElementsNumber, interval)) return;
@@ -52,6 +53,8 @@ namespace GameOfLife
             Grid = new Grid(width, height, randomElementsNumber, periodicValues, selectedStartType,
                 selectedNeighborhood, ToDrawValues);
             _bitmap = new Bitmap(_maxWidth, _maxWidth / GlobalWidth * GlobalHeight);
+            boardPictureBox.Width = _bitmap.Width;
+            boardPictureBox.Height = _bitmap.Height;
             _grainedElementsNumber = Grid.Grained.Count;
             PauseButton.Text = "Pause";
             Timer = new Timer {Interval = interval};
@@ -79,8 +82,7 @@ namespace GameOfLife
 
         private void Simulation()
         {
-            boardPictureBox.Width = _bitmap.Width;
-            boardPictureBox.Height = _bitmap.Height;
+
             ActualView = Grid.Grained.ToList();
             Draw(ActualView, GlobalWidth, GlobalHeight);
             Grid.MakeNewGeneration(TimesList);
@@ -108,9 +110,8 @@ namespace GameOfLife
                         graphics.FillRectangle(brush, new Rectangle(0, 0, _maxWidth, _maxWidth / width * height));
                     }
                 }
-
+                boardPictureBox.BorderStyle = BorderStyle.Fixed3D;
                 boardPictureBox.Image = _bitmap;
-                boardPictureBox.BorderStyle = BorderStyle.FixedSingle;
                 return;
             }
 
@@ -160,6 +161,19 @@ namespace GameOfLife
             MessageBox.Show("All grains are ready", "Ready!", MessageBoxButtons.OK);
         }
 
+        private void DrawOnePixel(int x, int y, Color color)
+        {
+            using (var graphics = Graphics.FromImage(_bitmap))
+            {
+                using (var brush = new SolidBrush(color))
+                {
+                    graphics.FillRectangle(brush,
+                        new Rectangle(x * _elementSize, y * _elementSize, _elementSize, _elementSize));
+                }
+            }
+            boardPictureBox.Image = _bitmap;
+        }
+
         private void boardPictureBox_Click(object sender, EventArgs e)
         {
             var me = (MouseEventArgs) e;
@@ -168,25 +182,44 @@ namespace GameOfLife
             var xx = x / _elementSize;
             var yy = y / _elementSize;
 
-            if (Timer == null || Timer.Enabled == false)
+            if (Timer == null)
             {
-                ToDrawValues.Add(new Tuple<int, int>(xx, yy));
+                var color = InitialValuesGenerator.RandomColor();
+                ToDrawValues.Add(new Tuple<int, int, Color>(xx, yy, color));
+                DrawOnePixel(xx, yy, color);
             }
             else
             {
                 var added = Grid.AddValue(xx, yy);
                 _grainedElementsNumber = _grainedElementsNumber + added;
+                var pixel = Grid.BoardValues[xx, yy];
+                DrawOnePixel(xx, yy, pixel.Color);
             }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (InitialSetting.SelectedItem.ToString() != "Clicks" || WidthInput.Text == "" ||
-                HeightInput.Text == "") return;
-            ToDrawValues = new List<Tuple<int, int>>();
+            if (InitialSetting.SelectedItem.ToString() != "Clicks")
+            {
+                MessageBox.Show("Works only in Clicks mode", "Warning", MessageBoxButtons.OK);
+                return;
+            }
+            if (WidthInput.Text == "" || HeightInput.Text == "")
+            {
+                MessageBox.Show("You need to fill width and height", "Warning", MessageBoxButtons.OK);
+                return;
+            }
+            ToDrawValues = new List<Tuple<int, int, Color>>();
             var width = int.Parse(WidthInput.Text);
             var height = int.Parse(HeightInput.Text);
             Draw(null, width, height);
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
+            Environment.Exit(0);
+        }  
     }
 }
