@@ -39,14 +39,15 @@
             this.boardPictureBox = new System.Windows.Forms.PictureBox();
             this.IntervalLabel = new System.Windows.Forms.Label();
             this.IntervalInput = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.NeighborhoodType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.InitialSetting = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxPeriodical = new System.Windows.Forms.CheckBox();
             this.TimesList = new System.Windows.Forms.ListView();
             this.Action = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.boardPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -146,13 +147,25 @@
             this.IntervalInput.TabIndex = 11;
             this.IntervalInput.Text = "1";
             // 
-            // comboBox1
+            // NeighborhoodType
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(27, 230);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 12;
+            this.NeighborhoodType.FormattingEnabled = true;
+            this.NeighborhoodType.Items.AddRange(new object[] {
+            "Moore",
+            "Von Neumann",
+            "Hexagonal left",
+            "Hexagonal right",
+            "Hexagonal random",
+            "Pentagonal random",
+            "Tetragonal random",
+            "Triagonal random",
+            "Diagonal random",
+            "Monogonal random"});
+            this.NeighborhoodType.Location = new System.Drawing.Point(27, 230);
+            this.NeighborhoodType.Name = "NeighborhoodType";
+            this.NeighborhoodType.Size = new System.Drawing.Size(121, 21);
+            this.NeighborhoodType.TabIndex = 12;
+            this.NeighborhoodType.Text = "Moore";
             // 
             // label1
             // 
@@ -163,19 +176,19 @@
             this.label1.TabIndex = 13;
             this.label1.Text = "Neighborhood";
             // 
-            // comboBox2
+            // InitialSetting
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.InitialSetting.FormattingEnabled = true;
+            this.InitialSetting.Items.AddRange(new object[] {
             "Random",
             "Clicks",
             "Circle area",
             "Evenly"});
-            this.comboBox2.Location = new System.Drawing.Point(27, 28);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
-            this.comboBox2.TabIndex = 14;
-            this.comboBox2.Text = "Random";
+            this.InitialSetting.Location = new System.Drawing.Point(27, 28);
+            this.InitialSetting.Name = "InitialSetting";
+            this.InitialSetting.Size = new System.Drawing.Size(121, 21);
+            this.InitialSetting.TabIndex = 14;
+            this.InitialSetting.Text = "Random";
             // 
             // label2
             // 
@@ -186,16 +199,16 @@
             this.label2.TabIndex = 15;
             this.label2.Text = "Initial setting";
             // 
-            // checkBox1
+            // checkBoxPeriodical
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(26, 257);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 17);
-            this.checkBox1.TabIndex = 17;
-            this.checkBox1.Text = "Periodical";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxPeriodical.AutoSize = true;
+            this.checkBoxPeriodical.Location = new System.Drawing.Point(26, 257);
+            this.checkBoxPeriodical.Name = "checkBoxPeriodical";
+            this.checkBoxPeriodical.Size = new System.Drawing.Size(72, 17);
+            this.checkBoxPeriodical.TabIndex = 17;
+            this.checkBoxPeriodical.Text = "Periodical";
+            this.checkBoxPeriodical.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxPeriodical.UseVisualStyleBackColor = true;
             // 
             // TimesList
             // 
@@ -206,7 +219,6 @@
             this.TimesList.HideSelection = false;
             this.TimesList.Location = new System.Drawing.Point(12, 366);
             this.TimesList.Name = "TimesList";
-            this.TimesList.Scrollable = false;
             this.TimesList.Size = new System.Drawing.Size(160, 265);
             this.TimesList.TabIndex = 18;
             this.TimesList.UseCompatibleStateImageBehavior = false;
@@ -222,17 +234,28 @@
             this.Time.Text = "Time [ms]";
             this.Time.Width = 71;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(154, 28);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(65, 21);
+            this.button1.TabIndex = 19;
+            this.button1.Text = "Draw";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // GlobalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(989, 643);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.TimesList);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.checkBoxPeriodical);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.InitialSetting);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.NeighborhoodType);
             this.Controls.Add(this.IntervalInput);
             this.Controls.Add(this.IntervalLabel);
             this.Controls.Add(this.boardPictureBox);
@@ -266,14 +289,15 @@
         private System.Windows.Forms.PictureBox boardPictureBox;
         private System.Windows.Forms.Label IntervalLabel;
         private System.Windows.Forms.TextBox IntervalInput;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox NeighborhoodType;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox InitialSetting;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBoxPeriodical;
         private System.Windows.Forms.ListView TimesList;
         public System.Windows.Forms.ColumnHeader Action;
         private System.Windows.Forms.ColumnHeader Time;
+        private System.Windows.Forms.Button button1;
     }
 }
 

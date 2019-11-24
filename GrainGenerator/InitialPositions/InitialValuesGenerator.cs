@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace GameOfLife.InitialPositions
@@ -18,7 +17,7 @@ namespace GameOfLife.InitialPositions
                 PointsPropertiesGenerator.GenerateRandom(randomElementsNumber, 0, 16777216)
                     .ConvertAll(Color.FromArgb);
             Parallel.For(0, randomColorsToUse.Capacity,
-                (i) => { randomColorsToUse[i] = Color.FromArgb(255, randomColorsToUse[i]); });
+                i => { randomColorsToUse[i] = Color.FromArgb(255, randomColorsToUse[i]); });
             var randomizeValue = 0;
             for (var i = 0; i < widthElementsNumber; i++)
             {
@@ -44,6 +43,38 @@ namespace GameOfLife.InitialPositions
                     iterator++;
                 }
             }
+            return boardValues;
+        }
+
+        public static Color RandomColor()
+        {
+
+            var random = new Random(Guid.NewGuid().GetHashCode());
+            var randomNumber = random.Next(0, 16777216);
+            var color = Color.FromArgb(randomNumber);
+            return Color.FromArgb(255, color);
+        }
+
+        public static GamePixel[,] ValuesFromClicks(List<Tuple<int, int>> clicks, int widthElementsNumber, int heightElementsNumber)
+        {
+            var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
+            var randomizeValue = 0;
+            for (var i = 0; i < widthElementsNumber; i++)
+            {
+                for (var j = 0; j < heightElementsNumber; j++)
+                {
+                    boardValues[i, j] = new GamePixel { Id = randomizeValue, GrainValue = false };
+                    randomizeValue++;
+                }
+            }
+
+            foreach (var click in clicks)
+            {
+                boardValues[click.Item1, click.Item2].GrainValue = true;
+                var newColor = RandomColor();
+                boardValues[click.Item1, click.Item2].Color = newColor;
+            }
+
             return boardValues;
         }
     }
