@@ -34,7 +34,8 @@ namespace GameOfLife
             var height = int.Parse(HeightInput.Text);
             var randomElementsNumber = 0;
             if (InitialSetting.SelectedItem.ToString() == "Random" ||
-                InitialSetting.SelectedItem.ToString() == "Evenly")
+                InitialSetting.SelectedItem.ToString() == "Evenly" ||
+                InitialSetting.SelectedItem.ToString() == "Circle area")
             {
                 randomElementsNumber = int.Parse(RandomElementsNumberInput.Text);
             }
@@ -44,7 +45,6 @@ namespace GameOfLife
             if (!gridValidator.Validate(width, height, randomElementsNumber, interval)) return;
             PauseButton.Enabled = true;
             Grid = null;
-            TimesList.Items.Clear();
             Timer?.Dispose();
             GlobalWidth = width;
             GlobalHeight = height;
@@ -85,7 +85,7 @@ namespace GameOfLife
         {
             ActualView = Grid.Grained.ToList();
             Draw(ActualView, GlobalWidth, GlobalHeight);
-            Grid.MakeNewGeneration(TimesList);
+            Grid.MakeNewGeneration();
             _grainedElementsNumber = _grainedElementsNumber + Grid.Grained.Count;
         }
 
@@ -154,8 +154,6 @@ namespace GameOfLife
             }
 
             stopWatch.Stop();
-            var row = new ListViewItem(new[] {"Draw", stopWatch.ElapsedMilliseconds.ToString()});
-            TimesList.Items.Insert(0, row);
             if (_grainedElementsNumber != Grid.HeightElementsNumber * Grid.WidthElementsNumber) return;
             Timer.Stop();
             MessageBox.Show("All grains are ready", "Ready!", MessageBoxButtons.OK);
@@ -177,12 +175,12 @@ namespace GameOfLife
 
         private void boardPictureBox_Click(object sender, EventArgs e)
         {
+            if(_elementSize == 0) return;
             var me = (MouseEventArgs) e;
             var x = me.X;
             var y = me.Y;
             var xx = x / _elementSize;
             var yy = y / _elementSize;
-
             if (Timer == null)
             {
                 var color = InitialValuesGenerator.RandomColor();
@@ -220,8 +218,54 @@ namespace GameOfLife
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Application.Restart();
-            Environment.Exit(0);
+            if (ToDrawValues == null) return;
+            ToDrawValues.Clear();
+            var width = int.Parse(WidthInput.Text);
+            var height = int.Parse(HeightInput.Text);
+            Draw(null, width, height);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (newRandomInput.Text == "")
+            {
+                MessageBox.Show("You should write number of random elements", "Error", MessageBoxButtons.OK);
+                return;
+            }
+            var randomElementsNumber = int.Parse(newRandomInput.Text);
+            var pixels = new List<GamePixelWithCoordinates>();
+            var random = new Random(Guid.NewGuid().GetHashCode());
+            for (var i = 0; i < Grid.WidthElementsNumber; i++)
+            {
+                for (var j = 0; j < Grid.HeightElementsNumber; j++)
+                {
+                    if (!Grid.BoardValues[i, j].IsGrain()) continue;
+                    var actualItem = Grid.BoardValues[i, j];
+                    pixels.Add(new GamePixelWithCoordinates
+                    {
+                        Id = actualItem.Id,
+                        Color = actualItem.Color,
+                        GrainValue = actualItem.GrainValue,
+                        X = i,
+                        Y = j
+                    });
+                }
+            }
+            for (var i = 0; i < randomElementsNumber; i++)
+            {
+                var ifContain = false;
+                while (ifContain == false)
+                {
+                    var randX = random.Next(Grid.WidthElementsNumber);
+                    var randY = random.Next(Grid.HeightElementsNumber);
+                    var decision = pixels.Any(a => a.X == randX && a.Y == randY);
+                    if (decision) continue;
+                    var answer = Grid.AddValue(randX, randY, false);
+                    if (answer != 1) continue;
+                    DrawOnePixel(randX, randY, Color.FromArgb(random.Next(255), random.Next(255), random.Next(255)));
+                    ifContain = true;
+                }
+            }
         }
     }
 }

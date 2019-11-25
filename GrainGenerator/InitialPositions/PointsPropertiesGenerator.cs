@@ -32,24 +32,5 @@ namespace GameOfLife
             }
             return result;
         }
-
-        public static List<Tuple<int,int>> GenerateRandomCoordinates(int randomNumbers, int maxWidth, int maxHeight)
-        {
-            var random = new Random();
-            var coordinates = new HashSet<Tuple<int, int>>();
-            for (var i = 0; i < randomNumbers; i++)
-            {
-                Tuple<int, int> newCoordinates;
-                while (true)
-                {
-                    newCoordinates = new Tuple<int, int>(random.Next(maxWidth), random.Next(maxHeight));
-                    if (!coordinates.Contains(newCoordinates)) break;
-                }
-
-                coordinates.Add(newCoordinates);
-            }
-
-            return coordinates.ToList();
-        }
     }
 }

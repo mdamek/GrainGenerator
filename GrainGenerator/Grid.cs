@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,6 +68,8 @@ namespace GameOfLife
                         heightElementsNumber);
                     break;
                 case "Circle area":
+                    readyBoard = InitialValuesGenerator.CircleValues(randomElementsNumber, widthElementsNumber,
+                        heightElementsNumber);
                     break;
                 case "Evenly":
                     readyBoard = InitialValuesGenerator.EvenlyValues(randomElementsNumber, widthElementsNumber,
@@ -81,11 +82,9 @@ namespace GameOfLife
             return readyBoard;
         }
 
-        public void MakeNewGeneration(ListView listView)
+        public void MakeNewGeneration()
         {
             Grained = new ConcurrentBag<GamePixelWithCoordinates>();
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
             var temporaryBoard = new GamePixel[WidthElementsNumber, HeightElementsNumber];
             for (var i = 0; i < WidthElementsNumber; i++)
             {
@@ -100,17 +99,17 @@ namespace GameOfLife
             var toGrain = GetPixelsToGrain(temporaryBoard);
             Parallel.For(0, toGrain.Count, new ParallelOptions {MaxDegreeOfParallelism = 8},
                 i => { NeighborhoodsAction(temporaryBoard, toGrain[i]); });
-            stopWatch.Stop();
-            var row = new ListViewItem(new[] {"Calculation", stopWatch.ElapsedMilliseconds.ToString()});
-            listView.Items.Insert(0, row);
         }
 
-        public int AddValue(int x, int y)
+        public int AddValue(int x, int y, bool showMessage = true)
         {
             if (x > BoardValues.GetLength(0) || y > BoardValues.GetLength(1)) return 0;
             if (BoardValues[x, y].IsGrain())
             {
-                MessageBox.Show("This pixel is already grained", "Error", MessageBoxButtons.OK);
+                if (showMessage)
+                {
+                    MessageBox.Show("This pixel is already grained", "Error", MessageBoxButtons.OK);
+                }
                 return 0;
             }
 
@@ -146,21 +145,6 @@ namespace GameOfLife
             return pixels;
         }
 
-        //public GamePixel ChangeOnePixelColor(int x, int y)
-        //{
-        //    var value = BoardValues.SingleOrDefault(e => e.X == x && e.Y == y);
-        //    if(value == null) throw new ArgumentException("There is no that value");
-        //    var index = BoardValues.IndexOf(value);
-        //    if (BoardValues[index].IsGrain())
-        //    {
-
-        //    }
-        //    else
-        //    {
-        //        BoardValues[index].MakeGrain();
-        //    }
-        //    return BoardValues[index];
-        //}
         private void NeighborhoodsAction(GamePixel[,] temporaryBoard, GamePixelWithCoordinates actualPixel)
         {
             var x = actualPixel.X;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GameOfLife.Neighborhoods
 {
@@ -15,9 +13,9 @@ namespace GameOfLife.Neighborhoods
                     return GenerateNeighborhoodContainer("1,1,1,1,1,1,1,1");
                 case "Von Neumann":
                     return GenerateNeighborhoodContainer("0,1,0,1,1,0,1,0");
-                case "Hexagonal left":
-                    return GenerateNeighborhoodContainer("0,1,1,1,1,1,1,0");
                 case "Hexagonal right":
+                    return GenerateNeighborhoodContainer("0,1,1,1,1,1,1,0");
+                case "Hexagonal left":
                     return GenerateNeighborhoodContainer("1,1,0,1,1,0,1,1");
                 case "Hexagonal random":
                 {

@@ -61,7 +61,6 @@
     <Compile Include="Neighborhoods\NeighborhoodsCreator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IRules.cs" />
     <Compile Include="ToState.cs" />
     <EmbeddedResource Include="GlobalForm.resx">
       <DependentUpon>GlobalForm.cs</DependentUpon>

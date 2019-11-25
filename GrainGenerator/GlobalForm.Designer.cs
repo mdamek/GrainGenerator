@@ -44,11 +44,10 @@
             this.InitialSetting = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxPeriodical = new System.Windows.Forms.CheckBox();
-            this.TimesList = new System.Windows.Forms.ListView();
-            this.Action = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.newRandomInput = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.boardPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,9 +89,9 @@
             this.NumberOfRandomElementsLabel.AutoSize = true;
             this.NumberOfRandomElementsLabel.Location = new System.Drawing.Point(24, 132);
             this.NumberOfRandomElementsLabel.Name = "NumberOfRandomElementsLabel";
-            this.NumberOfRandomElementsLabel.Size = new System.Drawing.Size(163, 13);
+            this.NumberOfRandomElementsLabel.Size = new System.Drawing.Size(171, 13);
             this.NumberOfRandomElementsLabel.TabIndex = 4;
-            this.NumberOfRandomElementsLabel.Text = "Random elements/Evenly values";
+            this.NumberOfRandomElementsLabel.Text = "Random elements/Evenly values/r";
             // 
             // RandomElementsNumberInput
             // 
@@ -211,30 +210,6 @@
             this.checkBoxPeriodical.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxPeriodical.UseVisualStyleBackColor = true;
             // 
-            // TimesList
-            // 
-            this.TimesList.AutoArrange = false;
-            this.TimesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.Action,
-            this.Time});
-            this.TimesList.HideSelection = false;
-            this.TimesList.Location = new System.Drawing.Point(12, 366);
-            this.TimesList.Name = "TimesList";
-            this.TimesList.Size = new System.Drawing.Size(160, 265);
-            this.TimesList.TabIndex = 18;
-            this.TimesList.UseCompatibleStateImageBehavior = false;
-            this.TimesList.View = System.Windows.Forms.View.Details;
-            // 
-            // Action
-            // 
-            this.Action.Text = "Action";
-            this.Action.Width = 80;
-            // 
-            // Time
-            // 
-            this.Time.Text = "Time [ms]";
-            this.Time.Width = 71;
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(154, 12);
@@ -255,14 +230,32 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(26, 374);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(129, 50);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "Random values";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // newRandomInput
+            // 
+            this.newRandomInput.Location = new System.Drawing.Point(39, 430);
+            this.newRandomInput.Name = "newRandomInput";
+            this.newRandomInput.Size = new System.Drawing.Size(100, 20);
+            this.newRandomInput.TabIndex = 22;
+            // 
             // GlobalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(989, 643);
+            this.ClientSize = new System.Drawing.Size(1130, 643);
+            this.Controls.Add(this.newRandomInput);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.TimesList);
             this.Controls.Add(this.checkBoxPeriodical);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.InitialSetting);
@@ -306,11 +299,10 @@
         private System.Windows.Forms.ComboBox InitialSetting;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxPeriodical;
-        private System.Windows.Forms.ListView TimesList;
-        public System.Windows.Forms.ColumnHeader Action;
-        private System.Windows.Forms.ColumnHeader Time;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox newRandomInput;
     }
 }
 
