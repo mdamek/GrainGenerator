@@ -151,192 +151,216 @@ namespace GameOfLife
             var y = actualPixel.Y;
 
             var neighborhoods = new GamePixel[8];
-
-            if (x - 1 >= 0 && y - 1 >= 0)
+            if (_neighborhoodsPositions[0])
             {
-                if (_neighborhoodsPositions[0]) neighborhoods[0] = temporaryBoard[x - 1, y - 1];
-            }
-            else
-            {
-                if (PeriodicValues)
+                if (x - 1 >= 0 && y - 1 >= 0)
                 {
-                    if (x == 0 && y == 0)
+                    neighborhoods[0] = temporaryBoard[x - 1, y - 1];
+                }
+                else
+                {
+                    if (PeriodicValues)
                     {
-                        neighborhoods[0] = temporaryBoard[WidthElementsNumber - 1, HeightElementsNumber - 1];
+                        if (x == 0 && y == 0)
+                        {
+                            neighborhoods[0] = temporaryBoard[WidthElementsNumber - 1, HeightElementsNumber - 1];
+                        }
+                        else
+                        {
+                            if (x == 0 && y != 0)
+                            {
+                                neighborhoods[0] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
+                            }
+
+                            if (y == 0 && x != 0)
+                            {
+                                neighborhoods[0] = temporaryBoard[x - 1, y - 1 + HeightElementsNumber];
+                            }
+                        }
                     }
                     else
                     {
-                        if (x == 0 && y != 0)
-                        {
-                            neighborhoods[0] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
-                        }
-
-                        if (y == 0 && x != 0)
-                        {
-                            neighborhoods[0] = temporaryBoard[x - 1, y - 1 + HeightElementsNumber];
-                        }
+                        neighborhoods[0] = null;
                     }
                 }
-                else
-                {
-                    neighborhoods[0] = null;
-                }
             }
 
-            if (y - 1 >= 0)
+            if (_neighborhoodsPositions[1])
             {
-                if (_neighborhoodsPositions[1]) neighborhoods[1] = temporaryBoard[x, y - 1];
-            }
-            else
-            {
-                if (PeriodicValues)
+                if (y - 1 >= 0)
                 {
-                    neighborhoods[1] = temporaryBoard[x, y + HeightElementsNumber - 1];
+                    neighborhoods[1] = temporaryBoard[x, y - 1];
                 }
                 else
                 {
-                    neighborhoods[1] = null;
-                }
-            }
-
-            if (x + 1 < WidthElementsNumber && y - 1 >= 0)
-            {
-                if (_neighborhoodsPositions[2]) neighborhoods[2] = temporaryBoard[x + 1, y - 1];
-            }
-            else
-            {
-                if (PeriodicValues)
-                {
-                    if (x == WidthElementsNumber - 1 && y == 0)
+                    if (PeriodicValues)
                     {
-                        neighborhoods[2] = temporaryBoard[0, HeightElementsNumber - 1];
+                        neighborhoods[1] = temporaryBoard[x, y + HeightElementsNumber - 1];
                     }
                     else
                     {
-                        if (x == WidthElementsNumber - 1 && y != 0)
-                        {
-                            neighborhoods[2] = temporaryBoard[x + 1 - WidthElementsNumber, y - 1];
-                        }
-
-                        if (y == 0 && x != 0)
-                        {
-                            neighborhoods[2] = temporaryBoard[x + 1, y - 1 + HeightElementsNumber];
-                        }
+                        neighborhoods[1] = null;
                     }
                 }
-                else
-                {
-                    neighborhoods[2] = null;
-                }
             }
 
-            if (x - 1 >= 0)
+            if (_neighborhoodsPositions[2])
             {
-                if (_neighborhoodsPositions[3]) neighborhoods[3] = temporaryBoard[x - 1, y];
-            }
-            else
-            {
-                if (PeriodicValues)
+                if (x + 1 < WidthElementsNumber && y - 1 >= 0)
                 {
-                    neighborhoods[3] = temporaryBoard[x + WidthElementsNumber - 1, y];
+                    neighborhoods[2] = temporaryBoard[x + 1, y - 1];
                 }
                 else
                 {
-                    neighborhoods[3] = null;
-                }
-            }
-
-            if (x + 1 < WidthElementsNumber)
-            {
-                if (_neighborhoodsPositions[4]) neighborhoods[4] = temporaryBoard[x + 1, y];
-            }
-            else
-            {
-                if (PeriodicValues)
-                {
-                    neighborhoods[4] = temporaryBoard[x - WidthElementsNumber + 1, y];
-                }
-                else
-                {
-                    neighborhoods[4] = null;
-                }
-            }
-
-            if (x - 1 >= 0 && y + 1 < HeightElementsNumber)
-            {
-                if (_neighborhoodsPositions[5]) neighborhoods[5] = temporaryBoard[x - 1, y + 1];
-            }
-            else
-            {
-                if (PeriodicValues)
-                {
-                    if (x == 0 && y == HeightElementsNumber - 1)
+                    if (PeriodicValues)
                     {
-                        neighborhoods[5] = temporaryBoard[WidthElementsNumber - 1, 0];
+                        if (x == WidthElementsNumber - 1 && y == 0)
+                        {
+                            neighborhoods[2] = temporaryBoard[0, HeightElementsNumber - 1];
+                        }
+                        else
+                        {
+                            if (x == WidthElementsNumber - 1 && y != 0)
+                            {
+                                neighborhoods[2] = temporaryBoard[x + 1 - WidthElementsNumber, y - 1];
+                            }
+
+                            if (y == 0 && x != 0)
+                            {
+                                neighborhoods[2] = temporaryBoard[x + 1, y - 1 + HeightElementsNumber];
+                            }
+                        }
                     }
                     else
                     {
-                        if (x == 0 && y != 0)
-                        {
-                            neighborhoods[5] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
-                        }
-
-                        if (y == 0 && x != 0)
-                        {
-                            neighborhoods[5] = temporaryBoard[x - 1, y + 1 + HeightElementsNumber];
-                        }
+                        neighborhoods[2] = null;
                     }
                 }
-                else
-                {
-                    neighborhoods[5] = null;
-                }
             }
 
-            if (y + 1 < HeightElementsNumber)
+            if (_neighborhoodsPositions[3])
             {
-                if (_neighborhoodsPositions[6]) neighborhoods[6] = temporaryBoard[x, y + 1];
-            }
-            else
-            {
-                if (PeriodicValues)
+                if (x - 1 >= 0)
                 {
-                    neighborhoods[6] = temporaryBoard[x, y - HeightElementsNumber + 1];
+                    neighborhoods[3] = temporaryBoard[x - 1, y];
                 }
                 else
                 {
-                    neighborhoods[6] = null;
-                }
-            }
-
-            if (x + 1 < WidthElementsNumber && y + 1 < HeightElementsNumber)
-            {
-                if (_neighborhoodsPositions[7]) neighborhoods[7] = temporaryBoard[x + 1, y + 1];
-            }
-            else
-            {
-                if (PeriodicValues)
-                {
-                    if (x == WidthElementsNumber - 1 && y == HeightElementsNumber - 1)
+                    if (PeriodicValues)
                     {
-                        neighborhoods[7] = temporaryBoard[0, 0];
+                        neighborhoods[3] = temporaryBoard[x + WidthElementsNumber - 1, y];
                     }
                     else
                     {
-                        if (x == WidthElementsNumber - 1 && y != 0)
-                        {
-                            neighborhoods[7] = temporaryBoard[x + 1 - WidthElementsNumber, y + 1];
-                        }
-
-                        if (y == HeightElementsNumber - 1 && x != WidthElementsNumber - 1)
-                        {
-                            neighborhoods[5] = temporaryBoard[x + 1, y + 1 - HeightElementsNumber];
-                        }
+                        neighborhoods[3] = null;
                     }
+                }
+            }
+
+            if (_neighborhoodsPositions[4])
+            {
+                if (x + 1 < WidthElementsNumber)
+                {
+                    neighborhoods[4] = temporaryBoard[x + 1, y];
                 }
                 else
                 {
-                    neighborhoods[7] = null;
+                    if (PeriodicValues)
+                    {
+                        neighborhoods[4] = temporaryBoard[x - WidthElementsNumber + 1, y];
+                    }
+                    else
+                    {
+                        neighborhoods[4] = null;
+                    }
+                }
+            }
+
+            if (_neighborhoodsPositions[5])
+            {
+                if (x - 1 >= 0 && y + 1 < HeightElementsNumber)
+                {
+                    neighborhoods[5] = temporaryBoard[x - 1, y + 1];
+                }
+                else
+                {
+                    if (PeriodicValues)
+                    {
+                        if (x == 0 && y == HeightElementsNumber - 1)
+                        {
+                            neighborhoods[5] = temporaryBoard[WidthElementsNumber - 1, 0];
+                        }
+                        else
+                        {
+                            if (x == 0 && y != 0)
+                            {
+                                neighborhoods[5] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
+                            }
+
+                            if (y == 0 && x != 0)
+                            {
+                                neighborhoods[5] = temporaryBoard[x - 1, y + 1 + HeightElementsNumber];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        neighborhoods[5] = null;
+                    }
+                }
+
+            }
+
+            if (_neighborhoodsPositions[6])
+            {
+                if (y + 1 < HeightElementsNumber)
+                {
+                    neighborhoods[6] = temporaryBoard[x, y + 1];
+                }
+                else
+                {
+                    if (PeriodicValues)
+                    {
+                        neighborhoods[6] = temporaryBoard[x, y - HeightElementsNumber + 1];
+                    }
+                    else
+                    {
+                        neighborhoods[6] = null;
+                    }
+                }
+            }
+
+            if (_neighborhoodsPositions[7])
+            {
+                if (x + 1 < WidthElementsNumber && y + 1 < HeightElementsNumber)
+                {
+                    neighborhoods[7] = temporaryBoard[x + 1, y + 1];
+                }
+                else
+                {
+                    if (PeriodicValues)
+                    {
+                        if (x == WidthElementsNumber - 1 && y == HeightElementsNumber - 1)
+                        {
+                            neighborhoods[7] = temporaryBoard[0, 0];
+                        }
+                        else
+                        {
+                            if (x == WidthElementsNumber - 1 && y != 0)
+                            {
+                                neighborhoods[7] = temporaryBoard[x + 1 - WidthElementsNumber, y + 1];
+                            }
+
+                            if (y == HeightElementsNumber - 1 && x != WidthElementsNumber - 1)
+                            {
+                                neighborhoods[5] = temporaryBoard[x + 1, y + 1 - HeightElementsNumber];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        neighborhoods[7] = null;
+                    }
                 }
             }
 
@@ -345,7 +369,7 @@ namespace GameOfLife
                 .Where(e => e.GrainValue)
                 .GroupBy(e => e.Color)
                 .Select(e => new ColorCounter {Color = e.Key, Count = e.Count()})
-                .OrderBy(e => e.Count)
+                .OrderByDescending(e => e.Count)
                 .ToList();
             if (groupedByColors.Count == 0) return;
             var max = groupedByColors.First();
