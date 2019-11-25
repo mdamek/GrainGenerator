@@ -33,7 +33,8 @@ namespace GameOfLife
             var width = int.Parse(WidthInput.Text);
             var height = int.Parse(HeightInput.Text);
             var randomElementsNumber = 0;
-            if (InitialSetting.SelectedItem.ToString() == "Random")
+            if (InitialSetting.SelectedItem.ToString() == "Random" ||
+                InitialSetting.SelectedItem.ToString() == "Evenly")
             {
                 randomElementsNumber = int.Parse(RandomElementsNumberInput.Text);
             }
@@ -82,7 +83,6 @@ namespace GameOfLife
 
         private void Simulation()
         {
-
             ActualView = Grid.Grained.ToList();
             Draw(ActualView, GlobalWidth, GlobalHeight);
             Grid.MakeNewGeneration(TimesList);
@@ -110,7 +110,7 @@ namespace GameOfLife
                         graphics.FillRectangle(brush, new Rectangle(0, 0, _maxWidth, _maxWidth / width * height));
                     }
                 }
-                boardPictureBox.BorderStyle = BorderStyle.Fixed3D;
+
                 boardPictureBox.Image = _bitmap;
                 return;
             }
@@ -171,6 +171,7 @@ namespace GameOfLife
                         new Rectangle(x * _elementSize, y * _elementSize, _elementSize, _elementSize));
                 }
             }
+
             boardPictureBox.Image = _bitmap;
         }
 
@@ -195,7 +196,6 @@ namespace GameOfLife
                 var pixel = Grid.BoardValues[xx, yy];
                 DrawOnePixel(xx, yy, pixel.Color);
             }
-            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -205,11 +205,13 @@ namespace GameOfLife
                 MessageBox.Show("Works only in Clicks mode", "Warning", MessageBoxButtons.OK);
                 return;
             }
+
             if (WidthInput.Text == "" || HeightInput.Text == "")
             {
                 MessageBox.Show("You need to fill width and height", "Warning", MessageBoxButtons.OK);
                 return;
             }
+
             ToDrawValues = new List<Tuple<int, int, Color>>();
             var width = int.Parse(WidthInput.Text);
             var height = int.Parse(HeightInput.Text);
@@ -220,6 +222,6 @@ namespace GameOfLife
         {
             Application.Restart();
             Environment.Exit(0);
-        }  
+        }
     }
 }

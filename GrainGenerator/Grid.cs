@@ -21,7 +21,7 @@ namespace GameOfLife
         private readonly List<bool> _neighborhoodsPositions;
 
         public Grid(int widthElementsNumber, int heightElementsNumber, int randomElementsNumber, bool periodicValues,
-            string initialSetting, string neighborhoodType, List<Tuple<int,int, Color>> toDrawValues)
+            string initialSetting, string neighborhoodType, List<Tuple<int, int, Color>> toDrawValues)
         {
             WidthElementsNumber = widthElementsNumber;
             HeightElementsNumber = heightElementsNumber;
@@ -55,7 +55,7 @@ namespace GameOfLife
         }
 
         private GamePixel[,] InitializeBoardValues(int widthElementsNumber, int heightElementsNumber,
-            int randomElementsNumber, string initialSetting, List<Tuple<int,int, Color>> toDrawValues)
+            int randomElementsNumber, string initialSetting, List<Tuple<int, int, Color>> toDrawValues)
         {
             GamePixel[,] readyBoard = null;
             switch (initialSetting)
@@ -71,6 +71,8 @@ namespace GameOfLife
                 case "Circle area":
                     break;
                 case "Evenly":
+                    readyBoard = InitialValuesGenerator.EvenlyValues(randomElementsNumber, widthElementsNumber,
+                        heightElementsNumber);
                     break;
                 default:
                     throw new ArgumentException("Impossible value");
@@ -111,6 +113,7 @@ namespace GameOfLife
                 MessageBox.Show("This pixel is already grained", "Error", MessageBoxButtons.OK);
                 return 0;
             }
+
             var randomColor = InitialValuesGenerator.RandomColor();
             BoardValues[x, y].GrainValue = true;
             BoardValues[x, y].Color = randomColor;
@@ -173,7 +176,22 @@ namespace GameOfLife
             {
                 if (PeriodicValues)
                 {
-                    
+                    if (x == 0 && y == 0)
+                    {
+                        neighborhoods[0] = temporaryBoard[WidthElementsNumber - 1, HeightElementsNumber - 1];
+                    }
+                    else
+                    {
+                        if (x == 0 && y != 0)
+                        {
+                            neighborhoods[0] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
+                        }
+
+                        if (y == 0 && x != 0)
+                        {
+                            neighborhoods[0] = temporaryBoard[x - 1, y - 1 + HeightElementsNumber];
+                        }
+                    }
                 }
                 else
                 {
@@ -195,7 +213,6 @@ namespace GameOfLife
                 {
                     neighborhoods[1] = null;
                 }
-
             }
 
             if (x + 1 < WidthElementsNumber && y - 1 >= 0)
@@ -204,7 +221,29 @@ namespace GameOfLife
             }
             else
             {
-                neighborhoods[2] = null;
+                if (PeriodicValues)
+                {
+                    if (x == WidthElementsNumber - 1 && y == 0)
+                    {
+                        neighborhoods[2] = temporaryBoard[0, HeightElementsNumber - 1];
+                    }
+                    else
+                    {
+                        if (x == WidthElementsNumber - 1 && y != 0)
+                        {
+                            neighborhoods[2] = temporaryBoard[x + 1 - WidthElementsNumber, y - 1];
+                        }
+
+                        if (y == 0 && x != 0)
+                        {
+                            neighborhoods[2] = temporaryBoard[x + 1, y - 1 + HeightElementsNumber];
+                        }
+                    }
+                }
+                else
+                {
+                    neighborhoods[2] = null;
+                }
             }
 
             if (x - 1 >= 0)
@@ -220,7 +259,7 @@ namespace GameOfLife
                 else
                 {
                     neighborhoods[3] = null;
-                } 
+                }
             }
 
             if (x + 1 < WidthElementsNumber)
@@ -237,7 +276,6 @@ namespace GameOfLife
                 {
                     neighborhoods[4] = null;
                 }
-                
             }
 
             if (x - 1 >= 0 && y + 1 < HeightElementsNumber)
@@ -246,7 +284,29 @@ namespace GameOfLife
             }
             else
             {
-                neighborhoods[5] = null;
+                if (PeriodicValues)
+                {
+                    if (x == 0 && y == HeightElementsNumber - 1)
+                    {
+                        neighborhoods[5] = temporaryBoard[WidthElementsNumber - 1, 0];
+                    }
+                    else
+                    {
+                        if (x == 0 && y != 0)
+                        {
+                            neighborhoods[5] = temporaryBoard[x - 1 + WidthElementsNumber, y - 1];
+                        }
+
+                        if (y == 0 && x != 0)
+                        {
+                            neighborhoods[5] = temporaryBoard[x - 1, y + 1 + HeightElementsNumber];
+                        }
+                    }
+                }
+                else
+                {
+                    neighborhoods[5] = null;
+                }
             }
 
             if (y + 1 < HeightElementsNumber)
@@ -271,7 +331,29 @@ namespace GameOfLife
             }
             else
             {
-                neighborhoods[7] = null;
+                if (PeriodicValues)
+                {
+                    if (x == WidthElementsNumber - 1 && y == HeightElementsNumber - 1)
+                    {
+                        neighborhoods[7] = temporaryBoard[0, 0];
+                    }
+                    else
+                    {
+                        if (x == WidthElementsNumber - 1 && y != 0)
+                        {
+                            neighborhoods[7] = temporaryBoard[x + 1 - WidthElementsNumber, y + 1];
+                        }
+
+                        if (y == HeightElementsNumber - 1 && x != WidthElementsNumber - 1)
+                        {
+                            neighborhoods[5] = temporaryBoard[x + 1, y + 1 - HeightElementsNumber];
+                        }
+                    }
+                }
+                else
+                {
+                    neighborhoods[7] = null;
+                }
             }
 
             var groupedByColors = neighborhoods

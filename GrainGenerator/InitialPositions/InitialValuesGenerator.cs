@@ -55,7 +55,7 @@ namespace GameOfLife.InitialPositions
             return Color.FromArgb(255, color);
         }
 
-        public static GamePixel[,] ValuesFromClicks(List<Tuple<int, int, Color>> clicks, int widthElementsNumber, int heightElementsNumber)
+        public static GamePixel[,] ValuesFromClicks(IEnumerable<Tuple<int, int, Color>> clicks, int widthElementsNumber, int heightElementsNumber)
         {
             var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
             var randomizeValue = 0;
@@ -75,6 +75,17 @@ namespace GameOfLife.InitialPositions
             }
 
             return boardValues;
+        }
+
+        public static GamePixel[,] EvenlyValues(int evenValuesNumber,
+            int widthElementsNumber, int heightElementsNumber)
+        {
+            var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
+            
+
+
+            return boardValues;
+
         }
     }
 }

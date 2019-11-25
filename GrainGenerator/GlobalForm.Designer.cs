@@ -90,9 +90,9 @@
             this.NumberOfRandomElementsLabel.AutoSize = true;
             this.NumberOfRandomElementsLabel.Location = new System.Drawing.Point(24, 132);
             this.NumberOfRandomElementsLabel.Name = "NumberOfRandomElementsLabel";
-            this.NumberOfRandomElementsLabel.Size = new System.Drawing.Size(139, 13);
+            this.NumberOfRandomElementsLabel.Size = new System.Drawing.Size(163, 13);
             this.NumberOfRandomElementsLabel.TabIndex = 4;
-            this.NumberOfRandomElementsLabel.Text = "Number of random elements";
+            this.NumberOfRandomElementsLabel.Text = "Random elements/Evenly values";
             // 
             // RandomElementsNumberInput
             // 
