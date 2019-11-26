@@ -220,8 +220,11 @@ namespace GameOfLife
         {
             if (ToDrawValues == null) return;
             ToDrawValues.Clear();
+            
             var width = int.Parse(WidthInput.Text);
             var height = int.Parse(HeightInput.Text);
+            Grid.BoardValues = null;
+            Grid.BoardValues = InitialValuesGenerator.InitializeEmpty(width, height);
             Draw(null, width, height);
         }
 
@@ -266,6 +269,11 @@ namespace GameOfLife
                     ifContain = true;
                 }
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
         }
     }
 }

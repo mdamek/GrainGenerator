@@ -81,7 +81,85 @@ namespace GameOfLife.InitialPositions
 
         public static GamePixel[,] EvenlyValues(int evenValuesNumber, int widthElementsNumber, int heightElementsNumber)
         {
+            var width = (double) widthElementsNumber;
+            var height = (double) heightElementsNumber;
+            var random = new Random();
+            var stopWatch = new Stopwatch();
             var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
+            var randomizeValue = 0;
+            for (var i = 0; i < widthElementsNumber; i++)
+            {
+                for (var j = 0; j < heightElementsNumber; j++)
+                {
+                    boardValues[i, j] = new GamePixel { Id = randomizeValue, GrainValue = false };
+                    randomizeValue++;
+                }
+            }
+            var readyValues = new List<Tuple<int, int, int>>();
+            double ratio;
+            stopWatch.Start();
+            if (widthElementsNumber >= heightElementsNumber)
+            {
+                ratio = height / width;
+                while (stopWatch.Elapsed.Seconds < 3)
+                {
+                    var randX = random.Next(widthElementsNumber);
+                    var randY = random.Next(heightElementsNumber);
+                    if (randY <= randX)
+                    {
+                        var actualRatio = (double)randY / randX;
+                        if (Math.Abs(ratio - actualRatio) <= 0.02)
+                        {
+                            if (Math.Abs(randX * randY - evenValuesNumber) <= 50 && randX * randY - evenValuesNumber >= 0)
+                            {
+                                readyValues.Add(new Tuple<int, int, int>(randX, randY, randX * randY - evenValuesNumber));
+                            }
+                        }
+                    }
+                } 
+            }
+            else
+            {
+                ratio = width / height;
+                while (stopWatch.Elapsed.Seconds < 3)
+                {
+                    var randX = random.Next(widthElementsNumber);
+                    var randY = random.Next(heightElementsNumber);
+                    if (randY > randX)
+                    {
+                        var actualRatio = (double)randX / randY;
+                        if (Math.Abs(ratio - actualRatio) <= 0.02)
+                        {
+                            if (Math.Abs(randX * randY - evenValuesNumber) <= 50 && randX * randY - evenValuesNumber >= 0)
+                            {
+                                readyValues.Add(new Tuple<int, int, int>(randX, randY, randX * randY - evenValuesNumber));
+                            }
+                        }
+                    }
+                }
+            }
+            var finalValue = readyValues.OrderBy(e => e.Item3).FirstOrDefault();
+            if (finalValue == null)
+            {
+                boardValues = EvenlyValues(evenValuesNumber, widthElementsNumber, heightElementsNumber);
+            }
+            var finalX = finalValue.Item1;
+            var finalY = finalValue.Item2;
+
+            var xDistance = widthElementsNumber / finalX;
+            var yDistance = heightElementsNumber / finalY;
+
+            for (var i = 0; i < widthElementsNumber; i = i + xDistance)
+            {
+                for (var j = 0; j < heightElementsNumber; j = j + yDistance)
+                {
+                    boardValues[i, j].GrainValue = true;
+                    boardValues[i, j].Color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
+                }
+            }
+
+
+
             return boardValues;
         }
 
@@ -128,6 +206,23 @@ namespace GameOfLife.InitialPositions
                 boardValues[readyPoint.Item1, readyPoint.Item2].GrainValue = true;
                 boardValues[readyPoint.Item1, readyPoint.Item2].Color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
             }
+            return boardValues;
+        }
+
+
+        public static GamePixel[,] InitializeEmpty(int widthElementsNumber, int heightElementsNumber)
+        {
+            var boardValues = new GamePixel[widthElementsNumber, heightElementsNumber];
+            var randomizeValue = 0;
+            for (var i = 0; i < widthElementsNumber; i++)
+            {
+                for (var j = 0; j < heightElementsNumber; j++)
+                {
+                    boardValues[i, j] = new GamePixel { Id = randomizeValue, GrainValue = false };
+                    randomizeValue++;
+                }
+            }
+
             return boardValues;
         }
 
